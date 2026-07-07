@@ -11,7 +11,25 @@ from scipy.optimize import minimize
 from sklearn.impute import KNNImputer
 from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LogisticRegression
-from sklearn.linear_model._logistic import _logistic_loss_and_grad
+# --- compatibility shim: sklearn removed the private _logistic_loss_and_grad (>=1.1).
+# Equivalent standard L2-regularized binary logistic loss+grad (y in {-1,+1}).
+import numpy as _np
+from scipy.special import expit as _expit
+def _logistic_loss_and_grad(w, X, y, alpha, sample_weight=None):
+    n_samples, n_features = X.shape
+    fit_intercept = (w.size == n_features + 1)
+    c = w[-1] if fit_intercept else 0.0
+    ww = w[:-1] if fit_intercept else w
+    if sample_weight is None:
+        sample_weight = _np.ones(n_samples)
+    yz = y * (X @ ww + c)
+    loss = _np.sum(sample_weight * _np.logaddexp(0, -yz)) + 0.5 * alpha * _np.dot(ww, ww)
+    z0 = sample_weight * (_expit(yz) - 1) * y
+    grad = _np.empty_like(w)
+    grad[:n_features] = X.T @ z0 + alpha * ww
+    if fit_intercept:
+        grad[-1] = z0.sum()
+    return loss, grad
 from sklearn.model_selection import GridSearchCV, StratifiedKFold, GroupKFold
 from sklearn.metrics import roc_auc_score, make_scorer
 from sklearn.calibration import CalibratedClassifierCV
@@ -605,7 +623,7 @@ if __name__=='__main__':
     random_state = 2021
     suffix = 'haoqi'
     yname = 'icans'
-    filename = r'ImagesDataNewFeatures.xlsx'
+    filename = r'ImagesDataNewFeatures_deI.xlsx'
     
     ## load dataset
     
@@ -626,11 +644,11 @@ if __name__=='__main__':
     """
     
     sids = dfX.SID.astype(str).values #TODO use MRN to identify unique subjects
-    mrns = dfX.File.astype(str).values
+    mrns = dfX.SID.astype(str).values
     worst_delirium_Xnames = df_worst_delirium_names.EEGName.values.astype(str)
        
     ## more preprcessing
-    X = dfX.drop(columns=['SID','File'])
+    X = dfX.drop(columns=['SID','File'], errors='ignore')
     Xnames = np.array(X.columns)
     X = X.values.astype(float)
     

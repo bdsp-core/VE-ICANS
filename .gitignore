@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.DS_Store
+# PHI — raw feature files contain patient names; never commit (use *_deI.xlsx)
+NewFeatures.xlsx
+ImagesDataNewFeatures.xlsx
+CAR-T_ImagesCombinedWithReports.xlsx
+CAR-T_Images*.xlsx
+PrepedImages*.xlsx
+ImagesDataWithReport.xlsx
+results_ltr_*.pickle
+cv_predictions_*.csv
