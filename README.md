@@ -1,5 +1,11 @@
 # VE-ICANS
 
+## Published on bdsp.io
+- **Project:** https://bdsp.io/content/5n52dv55u1r47qlm0t3h/1.0.0/
+- **DOIs:** [10.60508/67tw-zc72](https://doi.org/10.60508/67tw-zc72) (v1.0.0) · [10.60508/7c23-zj08](https://doi.org/10.60508/7c23-zj08) (core)
+- **Paper:** Jones DK, et al. *EEG-based grading of ICANS.* Sci Rep 2022;12:20011. [10.1038/s41598-022-24010-1](https://doi.org/10.1038/s41598-022-24010-1)
+
+
 Code for **VE-ICANS** — a Visual-EEG-feature-based score for the severity
 of **Immune-effector-Cell-Associated Neurotoxicity Syndrome (ICANS)**,
 the neurotoxicity that can follow CAR-T cell therapy. Sibling of the
